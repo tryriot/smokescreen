@@ -3,7 +3,7 @@ name: build-and-push-docker-images
 on:
   workflow_dispatch:
   push:
-    branches: ["master"]
+    tags: ['*']
 
 jobs:
   build-and-push:
@@ -29,4 +29,4 @@ jobs:
         uses: docker/build-push-action@0a97817b6ade9f46837855d676c4cca3a2471fc9 # v4
         with:
           push: true
-          tags: ghcr.io/tryriot/smokescreen:latest
+          tags: ghcr.io/tryriot/smokescreen:${{ github.ref_name }},ghcr.io/tryriot/smokescreen:latest

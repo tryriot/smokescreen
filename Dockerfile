@@ -42,9 +42,18 @@ ENV DD_HOSTNAME=smokescreen-container
 
 RUN echo '#!/bin/bash' > /start.sh && \
     echo 'export DD_HOSTNAME=${DD_HOSTNAME:-$(hostname)}' >> /start.sh && \
-    echo '/opt/datadog-agent/bin/agent/agent run > /dev/null 2>&1 &' >> /start.sh && \
+    echo 'mkdir -p /etc/datadog-agent/conf.d/smokescreen.d' >> /start.sh && \
+    echo 'cat > /etc/datadog-agent/conf.d/smokescreen.d/conf.yaml << EOF' >> /start.sh && \
+    echo 'logs:' >> /start.sh && \
+    echo '  - type: file' >> /start.sh && \
+    echo '    path: "/var/log/smokescreen/smokescreen.log"' >> /start.sh && \
+    echo '    service: "smokescreen"' >> /start.sh && \
+    echo '    source: "go"' >> /start.sh && \
+    echo 'EOF' >> /start.sh && \
+    echo '/opt/datadog-agent/bin/agent/agent run &' >> /start.sh && \
     echo 'sleep 2' >> /start.sh && \
-    echo 'exec ./smokescreen --statsd-address localhost:8125 ' >> /start.sh && \
+    echo 'mkdir -p /var/log/smokescreen' >> /start.sh && \
+    echo 'exec ./smokescreen --statsd-address localhost:8125 >> /var/log/smokescreen/smokescreen.log 2>&1' >> /start.sh && \
     chmod +x /start.sh
 
 CMD ["/start.sh"]
