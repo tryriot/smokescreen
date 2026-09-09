@@ -1,0 +1,12 @@
+version: 2
+updates:
+  # SHA-pinned actions do not update themselves; without this the pins rot.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+    # Do not adopt a release the day it ships — leave a window for a malicious
+    # or broken version to be caught first.
+    cooldown:
+      default-days: 7
